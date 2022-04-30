@@ -1,37 +1,33 @@
 import fastify from "fastify"
-import { send } from "process"
-import { IQuerystring, IHeaders } from "./interface"
+import socketioServer from "fastify-socket.io"
+import path, { join } from "path"
+const { readFile } = require("fs").promises
 
-const server = fastify({
+const app = fastify({
     logger: {
         prettyPrint: true,
     },
 })
 
-server.get("/ping", async (request, reply) => {
-    return "pong\n"
+app.register(socketioServer)
+app.register(require("@fastify/static"), {
+    root: path.join(__dirname, "public"),
+    prefix: "/public/", // optional: default '/'
 })
-server.get<{
-    Querystring: IQuerystring
-    Headers: IHeaders
-}>(
-    "/auth",
-    {
-        preValidation: (request, reply, done) => {
-            const { username, password } = request.query
-            done(username !== "admin" ? new Error("Must be admin") : undefined) // only validate `admin` account
-        },
-    },
-    async (request, reply) => {
-        const customerHeader = request.headers["h-Custom"]
-        // do something with request data
-        return reply.send(customerHeader)
-    }
-)
-server.listen(8080, (err, address) => {
-    if (err) {
-        console.error(err)
-        process.exit(1)
-    }
-    console.log(`Server listening at ${address}`)
+
+app.get("/", async (req, reply) => {
+    const data = await readFile(join(__dirname, ".", "/public/index.html"))
+    reply.header("content-type", "text/html; charset=utf-8")
+    reply.send(data)
 })
+
+app.ready((err) => {
+    if (err) throw err
+
+    app.io.on("connection", (socket) => {
+        console.info("Socket connected!", socket.id)
+        socket.emit("server:data", () => console.log("Message form server"))
+    })
+})
+
+app.listen(3000)

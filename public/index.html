@@ -1,0 +1,20 @@
+14 lines (14 sloc) 347 Bytes
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+        <h1>Look at the server log to see if the connection happened</h1>
+    </body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const data = {
+            name: "Isai",
+        }
+        let socket = io()
+        socket.on("server:data")
+    </script>
+</html>
