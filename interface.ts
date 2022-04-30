@@ -1,14 +1,14 @@
-import { Static, Type } from "@sinclair/typebox"
+import { Static, Type } from "@sinclair/typebox";
 export interface IQuerystring {
-    username: string
-    password: string
+  username: string;
+  password: string;
 }
 
 export interface IHeaders {
-    "h-Custom": string
+  "h-Custom": string;
 }
 export const User = Type.Object({
-    name: Type.String(),
-    mail: Type.Optional(Type.String({ format: "email" })),
-})
-export type UserType = Static<typeof User>
+  name: Type.String(),
+  mail: Type.Optional(Type.String({ format: "email" })),
+});
+export type UserType = Static<typeof User>;
