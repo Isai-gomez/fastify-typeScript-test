@@ -99,7 +99,7 @@ app.register(require("@fastify/static"), {
 app.get("/", (req, reply) =>
   __awaiter(void 0, void 0, void 0, function* () {
     const data = yield readFile(
-      (0, path_1.join)(__dirname, "..", "/public/index.html")
+      (0, path_1.join)(__dirname, ".", "/public/index.html")
     );
     reply.header("content-type", "text/html; charset=utf-8");
     reply.send(data);
@@ -109,7 +109,10 @@ app.ready((err) => {
   if (err) throw err;
   app.io.on("connection", (socket) => {
     console.info("Socket connected!", socket.id);
-    socket.emit("server:data", () => console.log("Message form server"));
+    socket.on("chat:message", (message) => {
+      console.log(message);
+      app.io.emit("server:message", message);
+    });
   });
 });
 app.listen(3000);

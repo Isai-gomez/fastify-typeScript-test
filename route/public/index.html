@@ -1,0 +1,38 @@
+14 lines (14 sloc) 347 Bytes
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <form action="" id="form">
+      <input type="text" id="text" />
+      <button type="submit">Enviar</button>
+    </form>
+    <p class="message"></p>
+  </body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const data = {
+      name: "Isai",
+    };
+    const socket = io();
+    const message = document.querySelector(".message");
+    const form = document.querySelector("#form");
+    form.addEventListener("click", function (evt) {
+      evt.preventDefault();
+      console.log("dentro de clicl");
+      const text = document.querySelector("#text").value;
+      console.log(text);
+      socket.emit("chat:message", {
+        message: text,
+      });
+    });
+    socket.on("server:message", (data) => {
+      console.log(data.message);
+      message.innerHTML += `<p>${data.message}</p>`;
+    });
+  </script>
+</html>
